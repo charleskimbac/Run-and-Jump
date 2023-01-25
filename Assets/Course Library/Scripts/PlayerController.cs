@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody playerRb;
     public float jumpForce;
-    public float gravityMod;
+    private Vector3 gravityMod = new Vector3(0,-36, 0);
     private bool onGround = true;
     public bool gameOver = false;
     private Animator playerAnim;
@@ -19,7 +20,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         playerRb = GetComponent<Rigidbody>();
-        Physics.gravity *= gravityMod;
+        Physics.gravity = gravityMod;
         playerAnim = GetComponent<Animator>();
         playerAudio = GetComponent<AudioSource>();
     }
@@ -33,6 +34,10 @@ public class PlayerController : MonoBehaviour
             playerAnim.SetTrigger("Jump_trig");
             dirtParticle.Stop();
             playerAudio.PlayOneShot(jumpSound, 1f);
+        }
+
+        if (Input.GetKeyDown(KeyCode.R)) {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 
