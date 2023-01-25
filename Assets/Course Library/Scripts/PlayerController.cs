@@ -7,8 +7,8 @@ public class PlayerController : MonoBehaviour
 {
     private Rigidbody playerRb;
     public float jumpForce;
-    private Vector3 gravityMod = new Vector3(0,-36, 0);
-    private bool onGround = true;
+    private Vector3 gravityMod = new Vector3(0,-42, 0);
+    public bool onGround = true;
     public bool gameOver = false;
     private Animator playerAnim;
     public ParticleSystem explosionParticle;
@@ -29,8 +29,8 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space) && onGround && !gameOver){
-            playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             onGround = false;
+            playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             playerAnim.SetTrigger("Jump_trig");
             dirtParticle.Stop();
             playerAudio.PlayOneShot(jumpSound, 1f);
@@ -42,9 +42,10 @@ public class PlayerController : MonoBehaviour
     }
 
     private void OnCollisionEnter(Collision collision) {
-        if (collision.gameObject.tag == "Ground" && !gameOver) {
+        if (collision.gameObject.tag == "Ground") {
             onGround = true;
-            dirtParticle.Play();
+            if (!gameOver)
+                dirtParticle.Play();
         }
         else if (collision.gameObject.tag == "Obstacle") {
             gameOver = true;
@@ -54,6 +55,7 @@ public class PlayerController : MonoBehaviour
             dirtParticle.Stop();
             explosionParticle.Play();
             playerAudio.PlayOneShot(crashSound, 1f);
+            playerRb.constraints = RigidbodyConstraints.FreezeAll;
         }
     }
 
